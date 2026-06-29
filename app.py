@@ -9,6 +9,9 @@ from database import *
 from document_processor import save_document, process_document
 from vector_store import add_chunks
 
+with open("styles.css", "r") as f:
+    CUSTOM_CSS = f.read()
+
 # ---------------- Initialize Database ----------------
 
 init_db()
@@ -19,7 +22,13 @@ init_db()
 def upload_documents(files):
 
     if not files:
-        return [[doc] for doc in get_documents()]
+
+        docs = get_documents()
+
+        return gr.update(
+            choices=docs,
+            value=None
+        )
 
     for file in files:
 
@@ -52,40 +61,214 @@ def upload_documents(files):
 
 
 # ---------------- UI ----------------
-
 def create_gradio_interface():
 
-    with gr.Blocks(title="🤖 Enterprise Document Chatbot") as demo:
+    with gr.Blocks(
+        title="🧠 Enterprise Knowledge Workspace",
+        theme=gr.themes.Soft(),
+        css=CUSTOM_CSS
+    ) as demo:
 
-        gr.Markdown("# 🤖 Enterprise Document Chatbot")
+        # ================= HEADER =================
 
-        # ---------------- Upload Section ----------------
+        gr.HTML("""
+<div style="
+    background: linear-gradient(90deg,#0f172a,#1e293b);
+    padding:25px;
+    border-radius:15px;
+    color:white;
+    margin-bottom:15px;
+">
 
-        gr.Markdown("## 📂 Upload PDF Documents")
+<h1 style="margin:0;">
+🧠 Enterprise Knowledge Workspace
+</h1>
 
-        pdf_upload = gr.File(
-            label="Choose PDF Files",
-            file_types=[".pdf"],
-            file_count="multiple"
+<p style="margin-top:10px;font-size:18px;color:#cbd5e1;">
+AI Powered Enterprise Document Assistant
+</p>
+
+</div>
+""")
+        with gr.Row():
+
+            with gr.Column():
+
+                gr.HTML("""
+
+                <div style="
+                padding:20px;
+                background:#2563eb;
+                border-radius:18px;
+                color:white;
+                text-align:center;
+                ">
+
+                <h2>📄</h2>
+
+                <h3>Documents</h3>
+
+                Connected
+
+                </div>
+
+                """)
+
+            with gr.Column():
+
+                gr.HTML("""
+
+                <div style="
+                padding:20px;
+                background:#059669;
+                border-radius:18px;
+                color:white;
+                text-align:center;
+                ">
+
+                <h2>🗄</h2>
+
+                <h3>Vector Store</h3>
+
+                ChromaDB
+
+                </div>
+
+                """)
+
+            with gr.Column():
+
+                gr.HTML("""
+
+                <div style="
+                padding:20px;
+                background:#9333ea;
+                border-radius:18px;
+                color:white;
+                text-align:center;
+                ">
+
+                <h2>🤖</h2>
+
+                <h3>Gemini</h3>
+
+                Connected
+
+                </div>
+
+                """)
+
+            with gr.Column():
+
+                gr.HTML("""
+
+                <div style="
+                padding:20px;
+                background:#ea580c;
+                border-radius:18px;
+                color:white;
+                text-align:center;
+                ">
+
+                <h2>💾</h2>
+
+                <h3>SQLite</h3>
+
+                Ready
+
+                </div>
+
+                """)
+
+        # ================= MAIN LAYOUT =================
+
+        with gr.Row():
+
+            # ============================================================
+            # LEFT SIDEBAR
+            # ============================================================
+
+            with gr.Column(scale=1, min_width=320):
+
+                gr.Markdown("""
+                    # 📂 Document Library
+
+                    Upload, manage and search
+                    enterprise documents.
+                    """)
+
+                uploaded_docs = gr.Radio(
+                    label="Uploaded Documents",
+                    choices=get_documents(),
+                    interactive=True
+                )
+
+                pdf_upload = gr.File(
+                    label="Upload PDF Files",
+                    file_types=[".pdf"],
+                    file_count="multiple"
+                )
+
+                upload_btn = gr.Button(
+                    "📤 Upload Documents",
+                    variant="primary"
+                )
+
+                delete_btn = gr.Button(
+                    "🗑 Delete Selected Document",
+                    variant="stop"
+                )
+
+            # ============================================================
+            # RIGHT PANEL
+            # ============================================================
+
+            with gr.Column(scale=3):
+
+                gr.Markdown("""
+                # 🤖 Enterprise AI Assistant
+
+                Ask questions across all uploaded documents.
+                """)
+
+                history = gr.Chatbot(
+                    elem_id="chatbot",
+                    type="messages",
+                    show_label=False,
+                    height=700
+                )
+
+                msg = gr.Textbox(
+                    placeholder="Ask anything about your uploaded documents...",
+                    show_label=False,
+                    container=False
+                )
+
+                with gr.Row():
+
+                    submit_btn = gr.Button(
+                        "Send",
+                        variant="primary"
+                    )
+
+                    clear_btn = gr.ClearButton(
+                        [msg, history],
+                        value="Clear Chat"
+                    )
+
+        # ================= STATUS BAR =================
+
+        gr.Markdown(
+            """
+---
+🟢 **Gemini Connected** &nbsp;&nbsp;&nbsp;
+🗄 **ChromaDB Ready** &nbsp;&nbsp;&nbsp;
+💾 **SQLite Connected** &nbsp;&nbsp;&nbsp;
+⚡ **Local RAG Enabled**
+"""
         )
 
-        upload_btn = gr.Button(
-            "📤 Upload Documents",
-            variant="primary"
-        )
-
-        uploaded_docs = gr.Radio(
-            label="📂 Uploaded Documents",
-            choices=get_documents(),
-            interactive=True
-        )
-
-        delete_btn = gr.Button(
-            "🗑 Delete Selected Document",
-            variant="stop"
-        )
-
-        # ---------------- Button Callbacks ----------------
+        # ================= BUTTON CALLBACKS =================
 
         upload_btn.click(
             fn=upload_documents,
@@ -99,48 +282,7 @@ def create_gradio_interface():
             outputs=uploaded_docs
         )
 
-        # ---------------- Chatbot ----------------
-
-        history = gr.Chatbot(
-            elem_id="chatbot",
-            type="messages",
-            height=500,
-            show_label=False
-        )
-
-        msg = gr.Textbox(
-            placeholder="Ask questions about your uploaded documents...",
-            show_label=False
-        )
-
-        with gr.Row():
-
-            submit_btn = gr.Button(
-                "Send",
-                variant="primary"
-            )
-
-            clear_btn = gr.ClearButton(
-                [msg, history],
-                value="Clear Chat"
-            )
-
-        # ---------------- CSS ----------------
-
-        css = """
-        #chatbot {
-            height:500px;
-        }
-
-        .gradio-container{
-            max-width:950px;
-            margin:auto;
-        }
-        """
-
-        demo.css = css
-
-        # ---------------- Chat Functions ----------------
+        # ================= CHAT FUNCTIONS =================
 
         def user_submit(message, history):
 
@@ -193,6 +335,8 @@ def create_gradio_interface():
         )
 
     return demo
+
+
 def remove_document(filename):
 
     if filename:
@@ -210,6 +354,7 @@ def remove_document(filename):
         value=None
     )
 
+
 # ---------------- Launch ----------------
 
 if __name__ == "__main__":
@@ -217,7 +362,8 @@ if __name__ == "__main__":
     app = create_gradio_interface()
 
     app.launch(
-        server_name="0.0.0.0",
+        server_name="127.0.0.1",
         server_port=8080,
-        share=False
+        share=False,
+        inbrowser=True
     )

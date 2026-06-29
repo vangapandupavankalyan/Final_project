@@ -1,0 +1,133 @@
+/* ======================================================
+   Enterprise Knowledge Workspace Theme
+====================================================== */
+
+body{
+    background:#0f172a;
+}
+
+/* Main App */
+.gradio-container{
+    max-width:1700px !important;
+    margin:auto !important;
+    background:#0f172a !important;
+}
+
+/* Header */
+
+h1{
+    font-size:34px !important;
+    font-weight:700 !important;
+}
+
+h2{
+    font-size:24px !important;
+}
+
+/* Cards */
+
+.gr-group{
+
+    background:rgba(255,255,255,0.06)!important;
+
+    border:1px solid rgba(255,255,255,0.08)!important;
+
+    border-radius:18px!important;
+
+    backdrop-filter:blur(16px);
+
+    padding:18px!important;
+
+    box-shadow:0px 8px 30px rgba(0,0,0,.25);
+
+}
+
+/* Chatbot */
+
+#chatbot{
+
+    border-radius:20px;
+
+    border:1px solid #334155;
+
+    background:#111827;
+
+}
+
+/* Textbox */
+
+textarea{
+
+    border-radius:15px!important;
+
+    background:#1e293b!important;
+
+    color:white!important;
+
+    border:1px solid #334155!important;
+
+}
+
+/* Upload */
+
+input[type=file]{
+
+    background:#1e293b;
+
+    border-radius:15px;
+
+}
+
+/* Buttons */
+
+button{
+
+    border-radius:14px!important;
+
+    font-weight:bold!important;
+
+}
+
+/* Upload Button */
+
+button.primary{
+
+    background:linear-gradient(
+        90deg,
+        #2563eb,
+        #3b82f6
+    )!important;
+
+}
+
+/* Delete Button */
+
+button.stop{
+
+    background:#dc2626!important;
+
+}
+
+/* Radio */
+
+label{
+
+    color:white!important;
+
+}
+
+/* Markdown */
+
+.markdown{
+
+    color:white!important;
+
+}
+
+/* Footer */
+
+footer{
+
+    display:none!important;
+
+}
